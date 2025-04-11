@@ -26,6 +26,8 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
+int pgaccess(const void *addr, int n, uint64 *abits); //pgaccess
+
 #ifdef LAB_NET
 int bind(uint32);
 int unbind(uint32);

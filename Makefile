@@ -195,6 +195,8 @@ UPROGS=\
 	$U/_wc\
 	$U/_zombie\
 	$U/_print_kpgtbl\
+	$U/_pgaccess\
+
 
 
 
