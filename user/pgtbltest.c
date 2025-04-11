@@ -18,6 +18,7 @@ main(int argc, char *argv[])
   ugetpid_test();
   print_kpgtbl();
   superpg_test();
+  pgaccess_test();
   printf("pgtbltest: all tests succeeded\n");
   exit(0);
 }
@@ -139,4 +140,25 @@ superpg_test()
     }
   }
   printf("superpg_test: OK\n");  
+}
+
+void 
+pgaccess_test() {
+  char *buf = malloc(32 * PGSIZE);
+  uint64 abits;
+  
+  if(pgaccess(buf, 32, &abits) < 0)
+      err("pgaccess failed");
+  assert(abits == 0);
+
+  buf[0] = 1;            // Trang 0
+  buf[2*PGSIZE] = 1;     // Trang 2
+  buf[31*PGSIZE] = 1;    // Trang cuối
+
+  if(pgaccess(buf, 32, &abits) < 0)
+      err("pgaccess failed");
+  
+  assert(abits == ((1UL << 0) | (1UL << 2) | (1UL << 31)));
+  
+  free(buf);
 }
