@@ -1,0 +1,17 @@
+LAB PGTBL ANSWERS
+
+Q1: Briefly describe what your `vmprint()` prints and what you used it to debug.
+A1: vmprint() in ra cấu trúc ba cấp độ của page table theo dạng lùi dòng với địa chỉ ảo 64-bit được tính từ chỉ số PTE. Tôi dùng nó để kiểm tra xem superpage đã được map đúng chưa và xem layout của page table kernel.
+
+Q2: How did you change `exec()` to use superpages?
+A2: Tôi kiểm tra nếu một segment có kích thước 2MB (1 << 21) và được align đúng, thì tôi dùng `mappages_super()` để map nó thay vì gọi `uvmalloc`. Tôi dùng `kalloc()` để lấy địa chỉ vật lý.
+
+Q3: Did you use superpages for user memory or kernel memory or both?
+A3: Tôi chỉ dùng superpages cho user memory trong `exec()` khi load ELF segments đủ lớn.
+
+Q4: What is the benefit of using superpages?
+A4: Giảm số lần truy cập page table khi dịch địa chỉ ảo → vật lý, tiết kiệm bộ nhớ, tăng hiệu năng nhờ giảm TLB miss.
+
+Q5: If you used a special function `mappages_super()`, what did it do?
+A5: Hàm `mappages_super()` map một superpage 2MB bằng cách tạo PTE ở cấp độ thứ hai (level 1), đặt cờ `PTE_V | PTE_R/W/X`, và trỏ đến địa chỉ vật lý đã align 2MB.
+

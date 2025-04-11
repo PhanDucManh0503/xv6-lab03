@@ -9,6 +9,7 @@
 struct cpu cpus[NCPU];
 
 struct proc proc[NPROC];
+uint64 sys_kpgtbl(void);
 
 struct proc *initproc;
 
@@ -108,7 +109,6 @@ static struct proc *
 allocproc(void)
 {
 
-  printf(">>> allocproc: creating process %d\n", nextpid);
 
   struct proc *p;
 
