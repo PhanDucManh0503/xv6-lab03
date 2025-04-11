@@ -6,6 +6,8 @@
 #include "spinlock.h"
 #include "proc.h"
 
+uint64 sys_pgaccess(void);
+
 uint64
 sys_exit(void)
 {
@@ -122,4 +124,37 @@ sys_uptime(void)
   xticks = ticks;
   release(&tickslock);
   return xticks;
+}
+
+
+uint64
+sys_pgaccess(void)
+{
+  uint64 start_va;
+  int num_pages;
+  uint64 user_abits;
+
+  argaddr(0, &start_va);
+  argint(1, &num_pages);
+  argaddr(2, &user_abits);
+
+  if (num_pages > 64)
+    return -1;
+
+  struct proc *p = myproc();
+  uint64 mask = 0;
+
+  for (int i = 0; i < num_pages; i++) {
+    uint64 va = start_va + i * PGSIZE;
+    pte_t *pte = walk(p->pagetable, va, 0);
+    if (pte && (*pte & PTE_A)) {
+      mask |= (1ULL << i);
+      *pte &= ~PTE_A; // clear Accessed bit
+    }
+  }
+
+  if (copyout(p->pagetable, user_abits, (char *)&mask, sizeof(mask)) < 0)
+    return -1;
+
+  return 0;
 }
