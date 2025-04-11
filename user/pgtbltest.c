@@ -161,4 +161,5 @@ pgaccess_test() {
   assert(abits == ((1UL << 0) | (1UL << 2) | (1UL << 31)));
   
   free(buf);
+  printf("pgaccess_test: OK\n");
 }
